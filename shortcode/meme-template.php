@@ -31,6 +31,9 @@ function meme_maker_template() {
         .menu-container img {
             background: #fff;
         }
+        .meme_acitve {
+            border-width: 4px;
+        }
     </style>
 
     <div class="bg-[#000]">

@@ -1,14 +1,42 @@
 <script>
+
+    <?php 
+    $terms = get_terms( array(
+        'taxonomy' => 'meme-image-group',
+        'hide_empty' => true,
+    ) );
+    ?>
+
     // meme generator
     jQuery(document).ready(function($) {
         const mainCanvas = document.getElementById('mainCanvas');
         const ctxMain = mainCanvas.getContext('2d');
 
         const imageGroups = [
-            { id: 'meme_image_group_1', defaultImage: 'https://michimaker.vercel.app/assets/cat/cat_a.png' },
-            { id: 'meme_image_group_2', defaultImage: null },
-            { id: 'meme_image_group_3', defaultImage: null },
-            // Add more groups as needed
+            <?php 
+            $i = 0;
+            $master_image_url = '';
+            if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+                foreach ( $terms as $term ) {
+                $i++;
+
+                $term_id = $term->term_id;;
+                $default_image_id = get_term_meta($term_id,'upload_default_image_of_this_group',true);
+                $bg_group_id = get_term_meta($term_id,'is_this_background_image_group',true);
+                $default_image_url = 'null';
+                if(!empty($default_image_id) && $bg_group_id != true ){
+                    $default_image_url = wp_get_attachment_image_url( $default_image_id, 'full' );
+                }
+                
+                if($bg_group_id == true){
+                    $master_image_url = wp_get_attachment_image_url( $default_image_id, 'full' );
+                }
+                ?>
+                { id: 'meme_image_group_<?= $i;?>', defaultImage: '<?= $default_image_url;?>' },
+                <?php
+                }
+            }    
+            ?>
         ];
 
         const canvases = {};
@@ -32,7 +60,7 @@
 
         function loadMainImage() {
             const mainImage = new Image();
-            mainImage.src = 'https://michimaker.vercel.app/assets/backgrounds/classic.png';
+            mainImage.src = '<?= $master_image_url;?>';
             mainImage.onload = function() {
                 ctxMain.drawImage(mainImage, 0, 0, mainCanvas.width, mainCanvas.height);
                 // Load default images for each group
