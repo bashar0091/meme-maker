@@ -1,4 +1,4 @@
-<div class="w-full p-[15px] xl:p-12 xl:border-l-2 border-solid border-[#48D1FF] overflow-x-hidden">
+<div class="w-full p-[30px] xl:p-12 xl:border-l-2 border-solid border-[#48D1FF] overflow-x-hidden">
     <h2 class="font-extrabold text-[#fff]  text-[35px] ff_bebas">CREATE YOUR CAPY</h2>
 
     <?php 
