@@ -6,7 +6,7 @@
         'taxonomy' => 'meme-image-group',
         'hide_empty' => true,
     ) );
-    $i = 0;
+    $i = 1;
     if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
         foreach ( $terms as $term ) {
             $i++;
@@ -16,10 +16,10 @@
 
             $image_group = "meme_image_group_$i";
             if($bg_group_id == true){
-                $image_group = "";
+                $image_group = "meme_image_group_1";
             }
             ?>
-            <div class="mt-8 <?= $image_group;?>">
+            <div id="ids_<?= $image_group;?>" class="mt-8 image_parts_group <?= $image_group;?>">
                 <h3 class="font-bold text-[#fff] uppercase text-[25px] ff_bebas"><?= $term->name;?></h3>
                 <div class="flex overflow-x-hidden">
 
@@ -30,9 +30,9 @@
                     <div class="menu-container flex w-full gap-3 overflow-x-hidden relative">
 
                         <?php 
-                        if($i > 1 && $bg_group_id != true) {
+                        if($i > 2 && $bg_group_id != true) {
                             ?>
-                            <button data-group="meme_image_group_<?= $i;?>" class="meme_acitve removeButton bg-[#fff] w-[84px] h-[84px] border border-solid border-[#48D1FF] rounded-xl flex justify-center items-center cursor-pointer">
+                            <button data-group="meme_image_group_<?= $i;?>" class="image_parts meme_acitve removeButton bg-[#fff] w-[84px] h-[84px] border border-solid border-[#48D1FF] rounded-xl flex justify-center items-center cursor-pointer">
                                 <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" class="text-[#000] w-7 h-7" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372 0-89 31.3-170.8 83.5-234.8l523.3 523.3C682.8 852.7 601 884 512 884zm288.5-137.2L277.2 223.5C341.2 171.3 423 140 512 140c205.4 0 372 166.6 372 372 0 89-31.3 170.8-83.5 234.8z"></path></svg>
                             </button>
                             <?php
@@ -64,7 +64,7 @@
                                     $is_active = 'border-4';
                                 }
                                 ?>
-                                <div class="flex justify-center items-center cursor-pointer w-[84px] h-[84px] border-[#48D1FF] rounded-xl overflow-hidden transition-all flex-none <?= $is_active;?>">
+                                <div class="image_parts flex justify-center items-center cursor-pointer w-[84px] h-[84px] border-[#48D1FF] rounded-xl overflow-hidden transition-all flex-none <?= $is_active;?>">
                                     <img src="<?= get_the_post_thumbnail_url();?>" alt="">
                                 </div>
                                 <?php

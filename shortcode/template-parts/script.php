@@ -14,9 +14,12 @@
 
         const imageGroups = [
             <?php 
-            $i = 0;
+            $i = 1;
             $master_image_url = '';
             if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+                ?>
+                { id: 'meme_image_group_1', defaultImage: '' },
+                <?php
                 foreach ( $terms as $term ) {
                 $i++;
 
@@ -30,6 +33,7 @@
                 
                 if($bg_group_id == true){
                     $master_image_url = wp_get_attachment_image_url( $default_image_id, 'full' );
+                    continue;
                 }
                 ?>
                 { id: 'meme_image_group_<?= $i;?>', defaultImage: '<?= $default_image_url;?>' },
@@ -103,11 +107,21 @@
 
         function handleRandomGenerate() {
             imageGroups.forEach(group => {
-                const images = $(`.meme_image_group_${group.id.slice(-1)} img`);
-                const randomImage = images[Math.floor(Math.random() * images.length)].src;
-                overlayImage(canvases[group.id], randomImage);
+                const images = $(`.meme_image_group_${group.id.slice(-1)} .image_parts img`);
+                const randomImage = images[Math.floor(Math.random() * images.length)];
+                const parent = $(randomImage).parent();
+
+                $(`.meme_image_group_${group.id.slice(-1)} .image_parts`).removeClass('border-4');
+
+                parent.addClass('border-4');
+                
+                const removeButton = $(`.removeButton[data-group="meme_image_group_${group.id.slice(-1)}"]`);
+                removeButton.removeClass('border-4 meme_acitve');
+                
+                overlayImage(canvases[group.id], randomImage.src);
             });
         }
+
 
         function handleDownload() {
             const downloadCanvas = document.createElement('canvas');
