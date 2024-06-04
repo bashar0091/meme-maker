@@ -103,6 +103,9 @@
                     overlayImage(canvases[group.id], group.defaultImage);
                 }
             });
+
+            $('.image_parts').removeClass('border-4');
+            $('.removeButton, .marked_active').addClass('border-4');
         }
 
         function handleRandomGenerate() {

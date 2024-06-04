@@ -61,7 +61,7 @@
 
                                 $is_active = 'border';
                                 if($active_image_id == true){
-                                    $is_active = 'border-4';
+                                    $is_active = 'border-4 marked_active';
                                 }
                                 ?>
                                 <div class="image_parts flex justify-center items-center cursor-pointer w-[84px] h-[84px] border-[#48D1FF] rounded-xl overflow-hidden transition-all flex-none <?= $is_active;?>">
