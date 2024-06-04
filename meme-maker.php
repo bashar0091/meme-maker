@@ -3,7 +3,7 @@
  * Plugin Name: Meme Maker
  * Description: 
  * Version:     1.0.0
- * Author:      Awal Bashar
+ * Author:      CAPY
  * Author URI:  
  * Text Domain: meme_maker
  */
