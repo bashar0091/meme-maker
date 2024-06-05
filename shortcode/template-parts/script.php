@@ -44,6 +44,7 @@
         ];
 
         const canvases = {};
+        const imagesLoaded = {};
 
         function createCanvasLayer(id) {
             const canvas = document.createElement('canvas');
@@ -66,44 +67,99 @@
             const mainImage = new Image();
             mainImage.src = '<?= $master_image_url;?>';
             mainImage.onload = function() {
-                ctxMain.drawImage(mainImage, 0, 0, mainCanvas.width, mainCanvas.height);
-                // Load default images for each group
+                imagesLoaded['main'] = mainImage;
+
                 imageGroups.forEach(group => {
-                    if (group.defaultImage) {
-                        overlayImage(canvases[group.id], group.defaultImage);
+                    if (group.defaultImage && group.defaultImage !== 'null') {
+                        overlayImage(group.id, group.defaultImage);
                     }
                 });
             };
         }
 
-        function overlayImage(ctx, src) {
+        function overlayImage(groupId, src) {
             const overlay = new Image();
             overlay.src = src;
             overlay.onload = function() {
-                ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-                ctx.drawImage(overlay, 0, 0, mainCanvas.width, mainCanvas.height);
+                imagesLoaded[groupId] = overlay;
+                drawCanvas();
             };
         }
+
+        function drawCanvas() {
+            ctxMain.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+            // Draw main image
+            if (imagesLoaded['main']) {
+                ctxMain.drawImage(imagesLoaded['main'], 0, 0, mainCanvas.width, mainCanvas.height);
+            }
+
+            // Draw overlay images
+            imageGroups.forEach(group => {
+                if (imagesLoaded[group.id]) {
+                    ctxMain.drawImage(imagesLoaded[group.id], 0, 0, mainCanvas.width, mainCanvas.height);
+                }
+            });
+
+            // Draw text
+            drawText(ctxMain);
+        }
+
+        function drawText(ctx) {
+            const topText = $('#topText').val().toUpperCase();
+            const bottomText = $('#bottomText').val().toUpperCase(); 
+            ctx.font = '700 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'white';
+
+            const shadowOffset = 2.5;
+            ctx.fillStyle = 'black';
+
+            for (let x = -shadowOffset; x <= shadowOffset; x++) {
+                for (let y = -shadowOffset; y <= shadowOffset; y++) {
+                    if (topText) {
+                        ctx.fillText(topText, mainCanvas.width / 2 + x, 40 + y);
+                    }
+                    if (bottomText) {
+                        ctx.fillText(bottomText, mainCanvas.width / 2 + x, mainCanvas.height - 20 + y);
+                    }
+                }
+            }
+
+            ctx.fillStyle = 'white';
+            if (topText) {
+                ctx.fillText(topText, mainCanvas.width / 2, 40);
+            }
+            if (bottomText) {
+                ctx.fillText(bottomText, mainCanvas.width / 2, mainCanvas.height - 20);
+            }
+        }
+
 
         function handleImageClick(event) {
             const group = event.data.group;
             const src = $(this).attr('src');
-            overlayImage(canvases[group.id], src);
+            overlayImage(group.id, src);
         }
 
         function handleRemoveButtonClick(event) {
             const group = event.data.group;
-            canvases[group.id].clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            delete imagesLoaded[group.id];
+            drawCanvas();
         }
 
         function handleReset() {
-            Object.values(canvases).forEach(ctx => ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height));
-            imageGroups.forEach(group => {
-                if (group.defaultImage) {
-                    overlayImage(canvases[group.id], group.defaultImage);
+            Object.keys(imagesLoaded).forEach(key => {
+                if (key !== 'main') {
+                    delete imagesLoaded[key];
                 }
             });
-
+            imageGroups.forEach(group => {
+                if (group.defaultImage) {
+                    overlayImage(group.id, group.defaultImage);
+                }
+            });
+            drawCanvas();
             $('.image_parts').removeClass('border-4');
             $('.removeButton, .marked_active').addClass('border-4');
         }
@@ -121,7 +177,7 @@
                 const removeButton = $(`.removeButton[data-group="meme_image_group_${group.id.slice(-1)}"]`);
                 removeButton.removeClass('border-4 meme_acitve');
                 
-                overlayImage(canvases[group.id], randomImage.src);
+                overlayImage(group.id, randomImage.src);
             });
         }
 
@@ -132,14 +188,19 @@
             downloadCanvas.height = mainCanvas.height;
             const downloadCtx = downloadCanvas.getContext('2d');
 
+            drawCanvas();
+
             downloadCtx.drawImage(mainCanvas, 0, 0);
             Object.values(canvases).forEach(ctx => downloadCtx.drawImage(ctx.canvas, 0, 0));
+            drawText(downloadCtx);
 
             const link = document.createElement('a');
             link.download = 'canvas_image.png';
             link.href = downloadCanvas.toDataURL();
             link.click();
         }
+
+        $('#topText, #bottomText').on('input', drawCanvas);
 
         initCanvases();
         loadMainImage();

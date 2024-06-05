@@ -1,6 +1,21 @@
 <div class="xl:w-[500px] p-[30px]">
+
+        <style>
+            input::placeholder {
+                color: #000000;
+            }
+        </style>
+
+        <div class="ff_gooddp learn-more mb-5">
+            <input type="text" class="w-full bg-[transparent] focus-visible:outline-none" id="topText" placeholder="Top Text">
+        </div>
+
         <div id="canvasContainer" class="relative w-[100%] xl:w-[440px] h-[440px] border-[8px] border-solid border-[#48D1FF] rounded-[16px] overflow-hidden">
             <canvas id="mainCanvas" class="canvasLayer" width="500" height="500"></canvas>
+        </div>
+
+        <div class="ff_gooddp learn-more mt-5">
+            <input type="text" class="w-full bg-[transparent] focus-visible:outline-none" id="bottomText" placeholder="Bottom Text">
         </div>
 
         <div class="mx-[10px] mt-4">
